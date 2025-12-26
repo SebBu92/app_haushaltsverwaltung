@@ -25,7 +25,7 @@ class MainWindow(tk.Tk):
     
     def create_button(self, text, row, column, command=None):
         if command is None:
-            command= lambda title=text: self.on_button_click(title)
+            command= lambda key=text: self.on_button_click(key)
 
         button = tk.Button(
             self, text=text, width=20, padx=2, pady=2, command=command)
