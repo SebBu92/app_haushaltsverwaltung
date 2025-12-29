@@ -8,12 +8,12 @@ class SuppliesWindow(ToplevelPattern):
         self.create_widgets()
 
     def configure_window(self):
-        self.geometry("800x520")
-        self.minsize(800, 520)
+        self.geometry("1020x520")
+        self.minsize(1020, 520)
 
     def create_widgets(self):
         self.frame_top = self.create_frame(self, 1, 1)
-        self.frame_center = self.create_frame(self, 2, 1, 2)
+        self.frame_center = self.create_frame(self, 2, 1)
         self.frame_bottom = self.create_frame(self, 3, 1)
 
         self.create_entry(self.frame_top, "Filter nach Bezeichnung", 1, 1)
@@ -21,7 +21,7 @@ class SuppliesWindow(ToplevelPattern):
         combobox_values = ["", "Aufsteigend", "Absteigend"]
         self.create_combobox(self.frame_top, 1, 2, combobox_values)
 
-        tree_headings = ["Vorrat", "Lagerort", "MHD"]
+        tree_headings = ["Vorrat", "Anzahl", "Lagerort", "MHD"]
         self.create_tree(self.frame_center, tree_headings, 1, 1)
 
         self.create_combobox(self.frame_bottom, 1, 1, "Lagerorte")
