@@ -56,6 +56,8 @@ class ToplevelPattern(tk.Toplevel):
         entry.bind("<FocusIn>", on_focus_in)
         entry.bind("<FocusOut>", on_focus_out)
 
+        return entry
+
     def do_nothing(self):
         pass
 

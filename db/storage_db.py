@@ -1,4 +1,4 @@
-from database import *
+from db.database import Database
 
 class StorageDatabase(Database):
     def __init__(self, db_path):

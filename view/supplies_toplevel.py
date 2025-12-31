@@ -1,4 +1,4 @@
-from toplevel_pattern import *
+from view.toplevel_pattern import ToplevelPattern
 
 class SuppliesWindow(ToplevelPattern):
 

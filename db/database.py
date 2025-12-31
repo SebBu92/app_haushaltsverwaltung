@@ -1,5 +1,5 @@
 import sqlite3
-from path import *
+from db.path import get_db_path
 
 db_path = get_db_path()
 

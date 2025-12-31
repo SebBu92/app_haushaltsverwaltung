@@ -1,6 +1,6 @@
 import tkinter as tk
-from storage_toplevel import *
-from supplies_toplevel import *
+from view.storage_toplevel import StrorageWindow
+from view.supplies_toplevel import SuppliesWindow
 
 class MainWindow(tk.Tk):
 
@@ -36,7 +36,5 @@ class MainWindow(tk.Tk):
         if window_class:
             window_class(self, key)
 
-if __name__ == "__main__":
-    app = MainWindow()
-    app.mainloop()
+
         
