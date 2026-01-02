@@ -1,4 +1,4 @@
-from database import *
+from db.database import Database
 
 class SuppliesDatabase(Database):
     def __init__(self, db_path):
@@ -10,24 +10,30 @@ class SuppliesDatabase(Database):
             waren_id INTEGER PRIMARY KEY AUTOINCREMENT,
             warenbezeichnung TEXT,
             anzahl INTEGER,
-            lagerort_id INTEGER,
+            lagerort TEXT,
             haltbarkeitsdatum TEXT,
-            FOREIGN KEY (lagerort_id) REFERENCES lagerort(lagerort_id)
+            FOREIGN KEY (lagerort) REFERENCES lagerort(lagerort)
         )               
         """)
         self.connection.commit()
 
-    def insert_supplies(self, warenbezeichnung, anzahl, lagerort, MHD):
+    def insert_supplies(self, warenbezeichnung, anzahl, lagerort, haltbarkeitsdatum):
         self.cursor.execute("""
         INSERT INTO vorraete(
-            warenbezeichnung, anzahl, lagerort, MHD) VALUES (?, ?, ?, ?)""",
-            (warenbezeichnung, anzahl, lagerort, MHD)
+            warenbezeichnung, anzahl, lagerort, haltbarkeitsdatum) VALUES (?, ?, ?, ?)""",
+            (warenbezeichnung, anzahl, lagerort, haltbarkeitsdatum)
         )
+        self.connection.commit()
 
     def get_supplies(self):
         self.cursor.execute("""
-        SELECT * FROM vorraete
+        SELECT warenbezeichnung, anzahl, lagerort, haltbarkeitsdatum FROM vorraete
         """)
+        return self.cursor.fetchall()
+    
+    def get_storage(self):
+        self.cursor.execute("""
+            SELECT lagerort FROM lagerort""")
         return self.cursor.fetchall()
     
     def delete_supplies(self, waren_id):

@@ -13,11 +13,17 @@ class ToplevelPattern(tk.Toplevel):
         frame.grid(row=row, column=column, columnspan=columnspan)
         return frame
 
-    def create_tree(self, frame, tree_headings, row, column, width=250):
+    def create_tree(self, frame, tree_headings, row, column, column_config=None):
         treeview = ttk.Treeview(frame, columns=tree_headings, show="headings", selectmode="browse")
+
         for heading in tree_headings:
+            if column_config:
+                config = column_config.get(heading, {})
+            else:
+                config = {}
+
             treeview.heading(heading, text=heading)
-            treeview.column(heading, width=width, anchor="center")
+            treeview.column(heading, width=config.get("width", 100), anchor="center")
             treeview.grid(row=row, column=column)
         return treeview
 
@@ -29,15 +35,18 @@ class ToplevelPattern(tk.Toplevel):
     def create_label(self, frame, text, row, column, width=20):
         label = tk.Label(frame, text=text, width=width, padx=2, pady=2)
         label.grid(row=row, column=column, padx=10, pady=10)
+        return label
 
     def create_combobox(self, frame, row, column, combobox_values, width=20, state="readonly"):
         combobox = ttk.Combobox(frame, width=width, state=state)
         combobox.grid(row=row, column=column, padx=10, pady=10)
         combobox["values"] = combobox_values
+        return combobox
 
     def create_spinbox(self, frame, row, column, width=20):
         spinbox = ttk.Spinbox(frame, from_=0, to=100, width=width)
         spinbox.grid(row=row, column=column, padx=10, pady=10)
+        return spinbox
 
     def create_entry(self, frame, text, row, column, width=20):
         entry = tk.Entry(frame, width=width)
@@ -61,13 +70,5 @@ class ToplevelPattern(tk.Toplevel):
     def do_nothing(self):
         pass
 
-"""
-FALSCH!!: Das passiert in der Main.py da hier nur view! 
-Ohne Logik an die Datenbank!
-In dieser Klasse werden alle Methoden definiert um Datenbankabfragen zu
-erstellen und um Daten in der Datenbank zu speichern. Z.B.:
-def db_safe():
-def db_delete():
-usw
-"""
+
 

@@ -7,8 +7,7 @@ class StorageDatabase(Database):
     def create_table(self):
         self.cursor.execute("""
             CREATE TABLE IF NOT EXISTS lagerort(
-                lagerort_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                lagerort TEXT NOT NULL
+                lagerort TEXT PRIMARY KEY NOT NULL
             )
             """)
         self.connection.commit()
@@ -19,10 +18,10 @@ class StorageDatabase(Database):
             (lagerort,))
         self.connection.commit()
 
-    def delete_storage(self, lagerort_id):
+    def delete_storage(self, lagerort):
         self.cursor.execute("""
-            DELETE FROM lagerort WHERE lagerort_id = ?""",
-            (lagerort_id,))
+            DELETE FROM lagerort WHERE lagerort = ?""",
+            (lagerort,))
         self.connection.commit()
 
     def get_storage(self):
