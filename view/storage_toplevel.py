@@ -61,8 +61,8 @@ class StrorageWindow(ToplevelPattern):
             try:
                 selected_iid = get_treeauswahl[0]
                 column_value = self.treeview.item(selected_iid, option="values")
-                lagerort_id = int(column_value[0])
-                self.db.delete_storage(lagerort_id)
+                storage_id = int(column_value[0])
+                self.db.delete_storage(storage_id)
                 self.update_treeview()
             except Exception as e:
                 messagebox.showerror("Fehler", str(e))

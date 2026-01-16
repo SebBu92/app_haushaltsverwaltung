@@ -32,9 +32,9 @@ class ToplevelPattern(tk.Toplevel):
             frame, text=text, width=width, padx=2, pady=2, command=command)
         button.grid(row=row, column=column, padx=10, pady=10)
     
-    def create_label(self, frame, text, row, column, width=20):
+    def create_label(self, frame, text, row, column, width=20, columnspan=1):
         label = tk.Label(frame, text=text, width=width, padx=2, pady=2)
-        label.grid(row=row, column=column, padx=10, pady=10)
+        label.grid(row=row, column=column, padx=10, pady=10, columnspan=columnspan)
         return label
 
     def create_combobox(self, frame, row, column, combobox_values, width=20, state="readonly"):
@@ -44,7 +44,7 @@ class ToplevelPattern(tk.Toplevel):
         return combobox
 
     def create_spinbox(self, frame, row, column, width=20):
-        spinbox = ttk.Spinbox(frame, from_=0, to=100, width=width)
+        spinbox = ttk.Spinbox(frame, from_=1, to=100, width=width)
         spinbox.grid(row=row, column=column, padx=10, pady=10)
         return spinbox
 

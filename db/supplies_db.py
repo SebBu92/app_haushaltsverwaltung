@@ -17,6 +17,7 @@ class SuppliesDatabase(Database):
         """)
         self.connection.commit()
 
+########## Insert ##########
     def insert_supplies(self, warenbezeichnung, anzahl, lagerort, haltbarkeitsdatum):
         self.cursor.execute("""
         INSERT INTO vorraete(
@@ -25,9 +26,10 @@ class SuppliesDatabase(Database):
         )
         self.connection.commit()
 
+########## Get ##########
     def get_supplies(self):
         self.cursor.execute("""
-        SELECT warenbezeichnung, anzahl, lagerort, haltbarkeitsdatum FROM vorraete
+        SELECT * From vorraete
         """)
         return self.cursor.fetchall()
     
@@ -36,6 +38,40 @@ class SuppliesDatabase(Database):
             SELECT lagerort FROM lagerort""")
         return self.cursor.fetchall()
     
+########## Update ##########
+    def add_quantity(self, anzahl, waren_id):
+        self.cursor.execute("""
+        UPDATE vorraete 
+        SET anzahl = anzahl + ? 
+        WHERE waren_id = ?""",
+        (anzahl, waren_id))
+        self.connection.commit()
+
+    def sub_quantity(self, anzahl, waren_id):
+        self.cursor.execute("""
+        UPDATE vorraete 
+        SET anzahl = anzahl - ? 
+        WHERE waren_id = ?""",
+        (anzahl, waren_id))
+        self.connection.commit()
+
+    def update_storage(self, lagerort, waren_id):
+        self.cursor.execute("""
+        UPDATE vorraete
+        SET lagerort = ?
+        WHERE waren_id = ?""",
+        (lagerort, waren_id))
+        self.connection.commit()
+
+    def update_mhd(self, haltbarkeitsdatum, waren_id):
+        self.cursor.execute("""
+        UPDATE vorraete
+        SET haltbarkeitsdatum = ?
+        WHERE waren_id = ?""",
+        (haltbarkeitsdatum, waren_id))
+        self.connection.commit()
+
+########## Delete ##########
     def delete_supplies(self, waren_id):
         self.cursor.execute("""
         DELETE FROM vorraete WHERE waren_id = ?""",
