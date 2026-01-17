@@ -61,7 +61,7 @@ class SuppliesWindow(ToplevelPattern):
         self.create_button(self.frame_buttons, "Lagerort ändern", 2, 3,
                             command=self.on_click_update_storage)
         self.create_button(self.frame_buttons, "MHD ändern", 2, 4,
-                            command=self.do_nothing)
+                            command=self.on_click_update_best_before)
         self.create_button(self.frame_buttons, "Zurück", 3, 4, self.destroy)
 
     def storage_locations(self):
@@ -148,7 +148,27 @@ class SuppliesWindow(ToplevelPattern):
                 messagebox.showerror("Fehler", str(e))
 
     def on_click_update_best_before(self):
-        pass
+        get_treechoice = self.treeview.selection()
+        if not get_treechoice:
+            messagebox.showinfo("Hinweis", "Bitte eine Auswahl vornehmen.")
+        if get_treechoice:
+            try:
+                selected_iid = get_treechoice[0]
+                selected_values = self.treeview.item(selected_iid, option="values")
+                supplies_id = int(selected_values[0])
+                supplies_mhd = self.entry_mhd.get()
+
+                if not self.is_valid_date(supplies_mhd):
+                    messagebox.showwarning(
+                        "Formatfehler",
+                        "Bitte gültiges Datumformat (JJJJ-MM-DD) eingeben."
+                    )
+
+                else:
+                    self.db.update_mhd(supplies_mhd, supplies_id)
+                    self.update_treeview()
+            except Exception as e:
+                messagebox.showerror("Fehler", str(e))
 
     def on_click_save(self):
         supplies_name = self.entry_supplies.get().strip()
@@ -170,7 +190,7 @@ class SuppliesWindow(ToplevelPattern):
             return
 
         if not supplies_mhd or supplies_mhd == "MHD (JJJJ-MM-DD)":
-            messagebox.showwarning("Fehler", "Bitte ein MHDs eingeben.")
+            messagebox.showwarning("Fehler", "Bitte ein MHD eingeben.")
             return
         
         if not self.is_valid_date(supplies_mhd):
