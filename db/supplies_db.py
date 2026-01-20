@@ -38,6 +38,18 @@ class SuppliesDatabase(Database):
             SELECT lagerort FROM lagerort""")
         return self.cursor.fetchall()
     
+    def sort_mhd_asc(self):
+        self.cursor.execute("""
+            SELECT * FROM vorraete ORDER BY haltbarkeitsdatum ASC        
+            """)
+        return self.cursor.fetchall()
+    
+    def sort_mhd_desc(self):
+        self.cursor.execute("""
+            SELECT * FROM vorraete ORDER BY haltbarkeitsdatum DESC
+            """)
+        return self.cursor.fetchall()
+    
 ########## Update ##########
     def add_quantity(self, anzahl, waren_id):
         self.cursor.execute("""

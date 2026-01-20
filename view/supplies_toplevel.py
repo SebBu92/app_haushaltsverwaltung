@@ -4,6 +4,7 @@ from db.supplies_db import SuppliesDatabase
 from db.database import db_path
 from tkinter import messagebox
 from controller.is_valid_date import CheckDate
+from controller.sort_mhd import SortMHD
 
 class SuppliesWindow(ToplevelPattern):
 
@@ -28,6 +29,7 @@ class SuppliesWindow(ToplevelPattern):
         self.label_sort = self.create_label(self.frame_top, "Sortieren nach MHD:", 1, 2)
         combobox_values = ["", "Aufsteigend", "Absteigend"]
         self.combobox_sort = self.create_combobox(self.frame_top, 2, 2, combobox_values)
+        self.combobox_sort.bind("<<ComboboxSelected>>", self.sort_mhd)
 
         tree_headings = ["ID", "Vorrat", "Anzahl", "Lagerort", "MHD"]
         column_config = {
@@ -64,6 +66,15 @@ class SuppliesWindow(ToplevelPattern):
         self.create_button(self.frame_buttons, "MHD ändern", 2, 4,
                             command=self.on_click_update_best_before)
         self.create_button(self.frame_buttons, "Zurück", 3, 4, self.destroy)
+
+    def sort_mhd(self, event):
+        sort_to_mhd = self.combobox_sort.get()
+        sorter = SortMHD()
+        sorted_supplies = sorter.sort(sort_to_mhd)
+        for value in self.treeview.get_children():
+            self.treeview.delete(value)
+        for value in sorted_supplies:
+            self.treeview.insert("", "end", values=value)
 
     def storage_locations(self):
         return [value[0] for value in self.db.get_storage()]
