@@ -3,6 +3,7 @@ from view.toplevel_pattern import ToplevelPattern
 from db.supplies_db import SuppliesDatabase
 from db.database import db_path
 from tkinter import messagebox
+from controller.is_valid_date import CheckDate
 
 class SuppliesWindow(ToplevelPattern):
 
@@ -158,7 +159,7 @@ class SuppliesWindow(ToplevelPattern):
                 supplies_id = int(selected_values[0])
                 supplies_mhd = self.entry_mhd.get()
 
-                if not self.is_valid_date(supplies_mhd):
+                if not CheckDate.is_valid_date(supplies_mhd):
                     messagebox.showwarning(
                         "Formatfehler",
                         "Bitte gültiges Datumformat (JJJJ-MM-DD) eingeben."
@@ -193,7 +194,7 @@ class SuppliesWindow(ToplevelPattern):
             messagebox.showwarning("Fehler", "Bitte ein MHD eingeben.")
             return
         
-        if not self.is_valid_date(supplies_mhd):
+        if not CheckDate.is_valid_date(supplies_mhd):
             messagebox.showwarning(
                 "Formatfehler",
                 "Bitte gültiges Datumformat (JJJJ-MM-DD) eingeben."
@@ -211,26 +212,6 @@ class SuppliesWindow(ToplevelPattern):
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
 
-    def is_valid_date(self, date):
-        if len(date) != 10:
-            return False
 
-        if date[4] != "-" or date[7] != "-":
-            return False
-
-        try:
-            year = int(date[0:4])
-            month = int(date[5:7])
-            day = int(date[8:10])
-        except ValueError:
-            return False
-
-        if not (1 <= month <= 12):
-            return False
-
-        if not (1 <= day <= 31):
-            return False
-
-        return True
 
 
