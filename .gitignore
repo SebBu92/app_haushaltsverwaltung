@@ -1,0 +1,24 @@
+# Python Bytecode
+*.pyc
+__pycache__/
+
+# Virtuelle Umgebung
+venv/
+env/
+
+# Editor / IDE
+.vscode/
+.idea/
+
+# MacOS
+.DS_Store
+
+# Lokale Datenbanken
+*.db
+db/*.db
+
+# Logs
+logs/
+
+# Umgebungsdateien
+.env
