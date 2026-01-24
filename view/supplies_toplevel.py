@@ -1,10 +1,11 @@
 import tkinter as tk
+from tkinter import messagebox
 from view.toplevel_pattern import ToplevelPattern
 from db.supplies_db import SuppliesDatabase
 from db.database import db_path
-from tkinter import messagebox
 from controller.is_valid_date import CheckDate
 from controller.sort_mhd import SortMHD
+from controller.sort_supplies import SortSupplies
 
 class SuppliesWindow(ToplevelPattern):
 
@@ -26,6 +27,8 @@ class SuppliesWindow(ToplevelPattern):
         self.frame_buttons = self.create_frame(self, 4, 1)
 
         self.entry_filter = self.create_entry(self.frame_top, "Filter nach Vorrat", 2, 1)
+        self.entry_filter.bind("<KeyRelease>", self.sort_supplies)
+
         self.label_sort = self.create_label(self.frame_top, "Sortieren nach MHD:", 1, 2)
         combobox_values = ["", "Aufsteigend", "Absteigend"]
         self.combobox_sort = self.create_combobox(self.frame_top, 2, 2, combobox_values)
@@ -68,13 +71,25 @@ class SuppliesWindow(ToplevelPattern):
         self.create_button(self.frame_buttons, "Zurück", 3, 4, self.destroy)
 
     def sort_mhd(self, event):
-        sort_to_mhd = self.combobox_sort.get()
+        combobox_value = self.combobox_sort.get()
         sorter = SortMHD()
-        sorted_supplies = sorter.sort(sort_to_mhd)
+        sorted_supplies_mhd = sorter.sort(combobox_value)
         for value in self.treeview.get_children():
             self.treeview.delete(value)
-        for value in sorted_supplies:
+        for value in sorted_supplies_mhd:
             self.treeview.insert("", "end", values=value)
+
+    def sort_supplies(self, event):
+        entry_value = self.entry_filter.get()
+        sorter = SortSupplies()
+        sorted_supplies = sorter.sort(entry_value)
+        if entry_value != "" and entry_value != "Filter nach Vorrat":
+            for value in self.treeview.get_children():
+                self.treeview.delete(value)
+            for value in sorted_supplies:
+                self.treeview.insert("", "end", values=value)
+        else: 
+            self.update_treeview()
 
     def storage_locations(self):
         return [value[0] for value in self.db.get_storage()]

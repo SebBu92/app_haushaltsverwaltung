@@ -33,6 +33,13 @@ class SuppliesDatabase(Database):
         """)
         return self.cursor.fetchall()
     
+    def sort_supplies(self, suchwort):
+        self.cursor.execute("""
+        SELECT * FROM vorraete
+        WHERE warenbezeichnung LIKE ? """,
+        (suchwort,))
+        return self.cursor.fetchall()
+    
     def get_storage(self):
         self.cursor.execute("""
             SELECT lagerort FROM lagerort""")
@@ -49,6 +56,7 @@ class SuppliesDatabase(Database):
             SELECT * FROM vorraete ORDER BY haltbarkeitsdatum DESC
             """)
         return self.cursor.fetchall()
+    
     
 ########## Update ##########
     def add_quantity(self, anzahl, waren_id):
