@@ -23,8 +23,8 @@ class ToplevelPattern(tk.Toplevel):
                 config = {}
 
             treeview.heading(heading, text=heading)
-            treeview.column(heading, width=config.get("width", 100), anchor="center")
-            treeview.grid(row=row, column=column)
+            treeview.column(heading, stretch=config.get("stretch", True), width=config.get("width", 100), anchor="center")
+        treeview.grid(row=row, column=column)
         return treeview
 
     def create_button(self, frame, text, row, column, command, width=20):

@@ -36,7 +36,7 @@ class SuppliesWindow(ToplevelPattern):
 
         tree_headings = ["ID", "Vorrat", "Anzahl", "Lagerort", "MHD"]
         column_config = {
-            "ID": {"width": 50},
+            "ID": {"stretch": False, "width": 0},
             "Vorrat": {"width": 350}, 
             "Anzahl": {"width": 50}, 
             "Lagerort": {"width": 350},
