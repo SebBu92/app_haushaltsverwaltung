@@ -69,7 +69,7 @@ class SuppliesWindow(ToplevelPattern):
     def sort_supplies_by_mhd(self, event):
         try:
             combobox_value = self.combobox_sort.get()
-            sorted_supplies_mhd = self.controller.sort_by_mhd(combobox_value)
+            sorted_supplies_mhd = self.controller.supplies_controller.sort_by_mhd(combobox_value)
             for value in self.treeview.get_children():
                 self.treeview.delete(value)
             for value in sorted_supplies_mhd:
@@ -81,7 +81,7 @@ class SuppliesWindow(ToplevelPattern):
     def filter_supplies_by_entry(self, event):
         try:
             entry_value = self.entry_filter.get()
-            sorted_supplies = self.controller.filter_supplies_by_entry(entry_value)
+            sorted_supplies = self.controller.supplies_controller.filter_supplies_by_entry(entry_value)
             if entry_value != "" and entry_value != "Filter nach Vorrat":
                 for value in self.treeview.get_children():
                     self.treeview.delete(value)
@@ -94,14 +94,13 @@ class SuppliesWindow(ToplevelPattern):
             messagebox.showerror("Fehler", str(e))
 
     def storage_locations(self):
-        #TODO: Hierzu sollte ich den StorageController implementieren!
-        return [value[0] for value in self.db.get_storage()]
+        return [value[0] for value in self.controller.storage_controller.get_storage()]
 
     def update_treeview(self):
         for value in self.treeview.get_children():
             self.treeview.delete(value)
 
-        treeview_values = self.controller.get_supplies()
+        treeview_values = self.controller.supplies_controller.get_supplies()
         for value in treeview_values:
             self.treeview.insert("", "end", values=value)
 
@@ -123,7 +122,7 @@ class SuppliesWindow(ToplevelPattern):
             selected_values = self.treeview.item(get_treechoice[0], option="values")
             supplies_id = int(selected_values[0])
 
-            self.controller.delete_supplies(supplies_id)
+            self.controller.supplies_controller.delete_supplies(supplies_id)
             self.update_treeview()
 
         except ValueError as e:
@@ -143,7 +142,7 @@ class SuppliesWindow(ToplevelPattern):
             supplies_id = int(selected_values[0])
             supplies_quantity = int(self.spinbox.get())
 
-            self.controller.add_quantity(supplies_quantity, supplies_id)
+            self.controller.supplies_controller.add_quantity(supplies_quantity, supplies_id)
             self.update_treeview()
 
         except ValueError as e:
@@ -163,7 +162,7 @@ class SuppliesWindow(ToplevelPattern):
             supplies_id = int(selected_values[0])
             supplies_quantity = int(self.spinbox.get())
 
-            self.controller.sub_quantity(supplies_quantity, supplies_id)
+            self.controller.supplies_controller.sub_quantity(supplies_quantity, supplies_id)
             self.update_treeview()
         
         except ValueError as e:
@@ -184,7 +183,7 @@ class SuppliesWindow(ToplevelPattern):
             supplies_id = int(selected_values[0])
             supplies_storage = self.combobox_storage.get()
 
-            self.controller.update_storage(supplies_storage, supplies_id)
+            self.controller.supplies_controller.update_storage(supplies_storage, supplies_id)
             self.update_treeview()
 
         except ValueError as e:
@@ -204,7 +203,7 @@ class SuppliesWindow(ToplevelPattern):
             supplies_id = int(selected_values[0])
             supplies_mhd = self.entry_mhd.get()
 
-            self.controller.update_mhd(supplies_mhd, supplies_id)
+            self.controller.supplies_controller.update_mhd(supplies_mhd, supplies_id)
             self.update_treeview()
         
         except ValueError as e:

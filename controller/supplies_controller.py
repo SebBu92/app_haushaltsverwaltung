@@ -28,21 +28,21 @@ class SuppliesController:
     def delete_supplies(self, supplies_id: int):
         if supplies_id <= 0:
             raise ValueError("Ungültige ID")
-        return self.db.delete_supplies()
+        return self.db.delete_supplies(supplies_id)
     
     def add_quantity(self, supplies_quantity: int, supplies_id: int):
         if supplies_id <= 0:
             raise ValueError("Ungültige ID")
         if not (1 <= supplies_quantity <= 100):
             raise ValueError("Eingabe sollte zwischen 1 und 100 liegen.")
-        return self.db.add_quantity()
+        return self.db.add_quantity(supplies_quantity, supplies_id)
     
     def sub_quantity(self, supplies_quantity: int, supplies_id: int):
         if supplies_id <= 0:
             raise ValueError("Ungültige ID")
         if not (1 <= supplies_quantity <= 100):
             raise ValueError("Eingabe sollte zwischen 1 und 100 liegen.")
-        return self.db.add_quantity(supplies_quantity, supplies_id)
+        return self.db.sub_quantity(supplies_quantity, supplies_id)
     
     def update_storage(self, supplies_storage: str, supplies_id: int):
         if not supplies_storage:

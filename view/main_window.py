@@ -16,7 +16,7 @@ class MainWindow(tk.Tk):
             "Vorräte verwalten": SuppliesWindow
         }
 
-        self.create_button("Was und wo als CSV", 2, 2)
+        self.create_button("Bestandsliste", 2, 2)
 
         self.create_button("Lagerort", 2, 4)
 

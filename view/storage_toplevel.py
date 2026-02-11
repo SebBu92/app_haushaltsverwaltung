@@ -1,14 +1,13 @@
 import tkinter as tk
-from view.toplevel_pattern import ToplevelPattern
-from db.storage_db import StorageDatabase
-from db.database import db_path
 from tkinter import messagebox
+from view.toplevel_pattern import ToplevelPattern
 
 class StrorageWindow(ToplevelPattern):
 
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, controller):
         super().__init__(parent, title)
-        self.db = StorageDatabase(db_path)
+
+        self.controller = controller
         self.configure_window()
         self.create_widgets()
         self.update_treeview()
@@ -61,7 +60,7 @@ class StrorageWindow(ToplevelPattern):
             try:
                 selected_iid = get_treeauswahl[0]
                 column_value = self.treeview.item(selected_iid, option="values")
-                storage_id = int(column_value[0])
+                storage_id = column_value[0]
                 self.db.delete_storage(storage_id)
                 self.update_treeview()
             except Exception as e:
