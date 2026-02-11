@@ -4,11 +4,12 @@ from view.supplies_toplevel import SuppliesWindow
 
 class MainWindow(tk.Tk):
 
-    def __init__(self):
+    def __init__(self, parent, controller):
         super().__init__()
         self.title("Haushaltsverwaltung")
-        self.geometry("600x200")
-        self.minsize(500, 150)
+        self.geometry("480x140")
+        self.minsize(480, 140)
+        self.controller = controller
 
         self.window_map = {
             "Lagerort": StrorageWindow,
@@ -34,7 +35,7 @@ class MainWindow(tk.Tk):
     def on_button_click(self, key):
         window_class = self.window_map.get(key)
         if window_class:
-            window_class(self, key)
+            window_class(self, key, controller=self.controller)
 
 
         

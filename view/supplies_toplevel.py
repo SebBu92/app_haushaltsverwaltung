@@ -1,17 +1,13 @@
 import tkinter as tk
 from tkinter import messagebox
 from view.toplevel_pattern import ToplevelPattern
-from db.supplies_db import SuppliesDatabase
-from db.database import db_path
-from controller.is_valid_date import CheckDate
-from controller.sort_mhd import SortMHD
-from controller.sort_supplies import SortSupplies
 
 class SuppliesWindow(ToplevelPattern):
 
-    def __init__(self, parent, title):
+    def __init__(self, parent, title, controller):
         super().__init__(parent, title)
-        self.db = SuppliesDatabase(db_path)
+
+        self.controller = controller
         self.configure_window()
         self.create_widgets()
         self.update_treeview()
@@ -27,12 +23,12 @@ class SuppliesWindow(ToplevelPattern):
         self.frame_buttons = self.create_frame(self, 4, 1)
 
         self.entry_filter = self.create_entry(self.frame_top, "Filter nach Vorrat", 2, 1)
-        self.entry_filter.bind("<KeyRelease>", self.sort_supplies)
+        self.entry_filter.bind("<KeyRelease>", self.filter_supplies_by_entry)
 
         self.label_sort = self.create_label(self.frame_top, "Sortieren nach MHD:", 1, 2)
         combobox_values = ["", "Aufsteigend", "Absteigend"]
         self.combobox_sort = self.create_combobox(self.frame_top, 2, 2, combobox_values)
-        self.combobox_sort.bind("<<ComboboxSelected>>", self.sort_mhd)
+        self.combobox_sort.bind("<<ComboboxSelected>>", self.sort_supplies_by_mhd)
 
         tree_headings = ["ID", "Vorrat", "Anzahl", "Lagerort", "MHD"]
         column_config = {
@@ -40,7 +36,7 @@ class SuppliesWindow(ToplevelPattern):
             "Vorrat": {"width": 350}, 
             "Anzahl": {"width": 50}, 
             "Lagerort": {"width": 350},
-            "MHD": {"width": 100},
+            "MHD": {}
             }
         self.treeview = self.create_tree(self.frame_center, tree_headings, 1, 1, column_config=column_config)
 
@@ -70,35 +66,42 @@ class SuppliesWindow(ToplevelPattern):
                             command=self.on_click_update_best_before)
         self.create_button(self.frame_buttons, "Zurück", 3, 4, self.destroy)
 
-    def sort_mhd(self, event):
-        combobox_value = self.combobox_sort.get()
-        sorter = SortMHD()
-        sorted_supplies_mhd = sorter.sort(combobox_value)
-        for value in self.treeview.get_children():
-            self.treeview.delete(value)
-        for value in sorted_supplies_mhd:
-            self.treeview.insert("", "end", values=value)
-
-    def sort_supplies(self, event):
-        entry_value = self.entry_filter.get()
-        sorter = SortSupplies()
-        sorted_supplies = sorter.sort(entry_value)
-        if entry_value != "" and entry_value != "Filter nach Vorrat":
+    def sort_supplies_by_mhd(self, event):
+        try:
+            combobox_value = self.combobox_sort.get()
+            sorted_supplies_mhd = self.controller.sort_by_mhd(combobox_value)
             for value in self.treeview.get_children():
                 self.treeview.delete(value)
-            for value in sorted_supplies:
+            for value in sorted_supplies_mhd:
                 self.treeview.insert("", "end", values=value)
-        else: 
-            self.update_treeview()
+        
+        except AttributeError as e:
+            messagebox.showerror("Fehler", str(e))
+
+    def filter_supplies_by_entry(self, event):
+        try:
+            entry_value = self.entry_filter.get()
+            sorted_supplies = self.controller.filter_supplies_by_entry(entry_value)
+            if entry_value != "" and entry_value != "Filter nach Vorrat":
+                for value in self.treeview.get_children():
+                    self.treeview.delete(value)
+                for value in sorted_supplies:
+                    self.treeview.insert("", "end", values=value)
+            else: 
+                self.update_treeview()
+        
+        except AttributeError as e:
+            messagebox.showerror("Fehler", str(e))
 
     def storage_locations(self):
+        #TODO: Hierzu sollte ich den StorageController implementieren!
         return [value[0] for value in self.db.get_storage()]
 
     def update_treeview(self):
         for value in self.treeview.get_children():
             self.treeview.delete(value)
 
-        treeview_values = self.db.get_supplies()
+        treeview_values = self.controller.get_supplies()
         for value in treeview_values:
             self.treeview.insert("", "end", values=value)
 
@@ -114,127 +117,116 @@ class SuppliesWindow(ToplevelPattern):
         get_treechoice = self.treeview.selection()
         if not get_treechoice:
             messagebox.showinfo("Hinweis", "Bitte eine Auswahl vornehmen.")
-        if get_treechoice:
-            try:
-                selected_iid = get_treechoice[0]
-                selected_values = self.treeview.item(selected_iid, option="values")
-                supplies_id = int(selected_values[0])
-                self.db.delete_supplies(supplies_id)
-                self.update_treeview()
-            except Exception as e:
-                messagebox.showerror("Fehler", str(e))
+            return 
+        
+        try:
+            selected_values = self.treeview.item(get_treechoice[0], option="values")
+            supplies_id = int(selected_values[0])
+
+            self.controller.delete_supplies(supplies_id)
+            self.update_treeview()
+
+        except ValueError as e:
+            messagebox.showerror("Ungültige ID", str(e))
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
     def on_click_add_quantity(self):
         get_treechoice = self.treeview.selection()
         if not get_treechoice:
             messagebox.showinfo("Hinweis", "Bitte eine Auswahl vornehmen.")
-        if get_treechoice:
-            try:
-                selected_iid = get_treechoice[0]
-                selected_values = self.treeview.item(selected_iid, option="values")
-                supplies_id = int(selected_values[0])
-                supplies_quantity = int(self.spinbox.get())
-                if supplies_quantity and (1 <= supplies_quantity <= 100):
-                    self.db.add_quantity(supplies_quantity, supplies_id)
-                    self.update_treeview()
-            except Exception as e:
-                messagebox.showerror("Fehler", str(e))
+            return
+
+        try:
+            selected_values = self.treeview.item(get_treechoice[0], option="values")
+
+            supplies_id = int(selected_values[0])
+            supplies_quantity = int(self.spinbox.get())
+
+            self.controller.add_quantity(supplies_quantity, supplies_id)
+            self.update_treeview()
+
+        except ValueError as e:
+            messagebox.showerror("Ungültige Eingabe", str(e))
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
     def on_click_sub_quantity(self):
         get_treechoice = self.treeview.selection()
         if not get_treechoice:
             messagebox.showinfo("Hinweis", "Bitte eine Auswahl vornehmen.")
-        if get_treechoice:
-            try:
-                selected_iid = get_treechoice[0]
-                selected_values = self.treeview.item(selected_iid, option="values")
-                supplies_id = int(selected_values[0])
-                supplies_quantity = int(self.spinbox.get())
-                if supplies_quantity and (1 <= supplies_quantity <= 100):
-                    self.db.sub_quantity(supplies_quantity, supplies_id)
-                    self.update_treeview()
-            except Exception as e:
-                messagebox.showerror("Fehler", str(e))
+            return
+        
+        try:
+            selected_values = self.treeview.item(get_treechoice[0], option="values")
+
+            supplies_id = int(selected_values[0])
+            supplies_quantity = int(self.spinbox.get())
+
+            self.controller.sub_quantity(supplies_quantity, supplies_id)
+            self.update_treeview()
+        
+        except ValueError as e:
+            messagebox.showerror("Ungültige eingabe", str(e))
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
     def on_click_update_storage(self):
         get_treechoice = self.treeview.selection()
+
         if not get_treechoice:
             messagebox.showinfo("Hinweis", "Bitte eine Auswahl vornehmen.")
-        if get_treechoice:
-            try:
-                selected_iid = get_treechoice[0]
-                selected_values = self.treeview.item(selected_iid, option="values")
-                supplies_id = int(selected_values[0])
-                supplies_storage = self.combobox_storage.get()
-                if not supplies_storage:
-                    messagebox.showinfo("Hinweis", "Bitte einen Lagerort auswählen.")
-                else:
-                    self.db.update_storage(supplies_storage, supplies_id)
-                    self.update_treeview()
-            except Exception as e:
-                messagebox.showerror("Fehler", str(e))
+            return
+        
+        try:
+            selected_values = self.treeview.item(get_treechoice[0], option="values")
+
+            supplies_id = int(selected_values[0])
+            supplies_storage = self.combobox_storage.get()
+
+            self.controller.update_storage(supplies_storage, supplies_id)
+            self.update_treeview()
+
+        except ValueError as e:
+            messagebox.showerror("Fehlerhafte Auswahl", str(e))       
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
     def on_click_update_best_before(self):
         get_treechoice = self.treeview.selection()
+
         if not get_treechoice:
             messagebox.showinfo("Hinweis", "Bitte eine Auswahl vornehmen.")
-        if get_treechoice:
-            try:
-                selected_iid = get_treechoice[0]
-                selected_values = self.treeview.item(selected_iid, option="values")
-                supplies_id = int(selected_values[0])
-                supplies_mhd = self.entry_mhd.get()
+            return
+        
+        try:
+            selected_values = self.treeview.item(get_treechoice[0], option="values")
+            supplies_id = int(selected_values[0])
+            supplies_mhd = self.entry_mhd.get()
 
-                if not CheckDate.is_valid_date(supplies_mhd):
-                    messagebox.showwarning(
-                        "Formatfehler",
-                        "Bitte gültiges Datumformat (JJJJ-MM-DD) eingeben."
-                    )
-
-                else:
-                    self.db.update_mhd(supplies_mhd, supplies_id)
-                    self.update_treeview()
-            except Exception as e:
-                messagebox.showerror("Fehler", str(e))
+            self.controller.update_mhd(supplies_mhd, supplies_id)
+            self.update_treeview()
+        
+        except ValueError as e:
+            messagebox.showerror("Formatfehler", str(e))
+        except Exception as e:
+            messagebox.showerror("Fehler", str(e))
 
     def on_click_save(self):
         supplies_name = self.entry_supplies.get().strip()
         supplies_storage = self.combobox_storage.get()
         supplies_mhd = self.entry_mhd.get()
-        try:
-            supplies_quantity = int(self.spinbox.get())
-            if supplies_quantity < 0 or supplies_quantity > 100:
-                supplies_quantity = 1
-        except ValueError:
-            supplies_quantity = 1
-
-        if not supplies_name or supplies_name == "Bezeichnung Vorrat":
-            messagebox.showwarning("Fehler", "Bitte eine Bezeichnung eingeben.")
-            return
-        
-        if not supplies_storage:
-            messagebox.showwarning("Fehler", "Bitte einen Lagerort wählen.")
-            return
-
-        if not supplies_mhd or supplies_mhd == "MHD (JJJJ-MM-DD)":
-            messagebox.showwarning("Fehler", "Bitte ein MHD eingeben.")
-            return
-        
-        if not CheckDate.is_valid_date(supplies_mhd):
-            messagebox.showwarning(
-                "Formatfehler",
-                "Bitte gültiges Datumformat (JJJJ-MM-DD) eingeben."
-            )
-            return
+        supplies_quantity = int(self.spinbox.get())
         
         try:
-            self.db.insert_supplies(supplies_name, supplies_quantity,
-                                    supplies_storage, supplies_mhd)
             self.update_treeview()
             self.entry_supplies.delete(0, tk.END)
             self.entry_supplies.insert(0, "Bezeichnung Vorrat")
             self.entry_mhd.delete(0, tk.END)
             self.entry_mhd.insert(0, "MHD (JJJJ-MM-DD)")
+
+        except ValueError as e:
+            messagebox.showerror("Fehelr", str(e))
         except Exception as e:
             messagebox.showerror("Fehler", str(e))
 

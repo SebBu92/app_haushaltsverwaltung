@@ -7,7 +7,7 @@ class SuppliesDatabase(Database):
     def create_table(self):
         self.cursor.execute("""
         CREATE TABLE IF NOT EXISTS vorraete(
-            waren_id INTEGER PRIMARY KEY AUTOINCREMENT,
+            waren_id INTEGER PRIMARY KEY,
             warenbezeichnung TEXT,
             anzahl INTEGER,
             lagerort TEXT,
