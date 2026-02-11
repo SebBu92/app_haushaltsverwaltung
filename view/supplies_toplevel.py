@@ -215,9 +215,11 @@ class SuppliesWindow(ToplevelPattern):
         supplies_name = self.entry_supplies.get().strip()
         supplies_storage = self.combobox_storage.get()
         supplies_mhd = self.entry_mhd.get()
-        supplies_quantity = int(self.spinbox.get())
+        supplies_quantity = self.spinbox.get()
         
         try:
+            self.controller.supplies_controller.save_supplies(supplies_name,
+                supplies_storage, supplies_mhd, supplies_quantity)
             self.update_treeview()
             self.entry_supplies.delete(0, tk.END)
             self.entry_supplies.insert(0, "Bezeichnung Vorrat")

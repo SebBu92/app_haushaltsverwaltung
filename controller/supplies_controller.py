@@ -62,8 +62,10 @@ class SuppliesController:
         except ValueError:
             raise ValueError("Menge muss eine Zahl sein.")
         
-        if not 0 <= int(quantity) > 100:
-            raise ValueError("Menge muss eine Zahl sein.")
+        if not 0 <= quantity < 100:
+            print(type(quantity))
+            raise ValueError("Menge muss zwischen 0 und 100 liegen.")
+            
         
         if not supplies_name or supplies_name == "Bezeichnung Vorrat":
             raise ValueError("Bitte eine Bezeichnung eingeben.")
@@ -77,11 +79,7 @@ class SuppliesController:
         if not CheckDate.is_valid_date(supplies_mhd):
             raise ValueError("Bitte gültiges Datumformat (JJJJ-MM-DD) eingeben.")
         
-        self.db.insert_supplies(supplies_name, supplies_quantity, supplies_storage, supplies_mhd)
-
-
-
-
-        
+        return self.db.insert_supplies(supplies_name, supplies_quantity, 
+                                        supplies_storage, supplies_mhd)
 
 
