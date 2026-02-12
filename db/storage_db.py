@@ -12,18 +12,21 @@ class StorageDatabase(Database):
             """)
         self.connection.commit()
 
+########## Insert ##########
     def insert_storage(self, lagerort):
         self.cursor.execute("""
             INSERT INTO lagerort (lagerort) VALUES (?)""",
             (lagerort,))
         self.connection.commit()
 
+########## Delete ##########
     def delete_storage(self, lagerort):
         self.cursor.execute("""
             DELETE FROM lagerort WHERE lagerort = ?""",
             (lagerort,))
         self.connection.commit()
 
+########## Get ##########
     def get_storage(self):
         self.cursor.execute("""
             SELECT * FROM lagerort""")
