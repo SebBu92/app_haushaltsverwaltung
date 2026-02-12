@@ -11,8 +11,8 @@ class StorageController:
         
         return self.db.insert_storage(storage_place)
     
-    def delete_storage(self, storage):
-        if not storage:
+    def delete_storage(self, storage_place):
+        if not storage_place:
             raise ValueError("Bitte eine Auswahl vornehmen.")
         
-        return self.db.delete_storage(storage)
+        return self.db.delete_storage(storage_place)

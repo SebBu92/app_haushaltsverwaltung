@@ -54,7 +54,9 @@ class StrorageWindow(ToplevelPattern):
 
     def on_click_delete(self):
         get_treeauswahl = self.treeview.selection()
-
+        if not get_treeauswahl:
+            messagebox.showinfo("Hinweis", "Bitte eine Auswahl im Tree vornehmen.")
+            return
         try:
             column_value = self.treeview.item(get_treeauswahl[0], option="values")
             storage_id = column_value[0]
