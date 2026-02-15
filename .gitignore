@@ -17,6 +17,9 @@ env/
 *.db
 db/*.db
 
+# Lokale csv-Datei
+*.csv
+
 # Logs
 logs/
 
