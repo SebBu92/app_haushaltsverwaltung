@@ -1,6 +1,7 @@
 import tkinter as tk
 from view.storage_toplevel import StrorageWindow
 from view.supplies_toplevel import SuppliesWindow
+from controller.create_csv import CreateSheet
 
 class MainWindow(tk.Tk):
 
@@ -16,7 +17,7 @@ class MainWindow(tk.Tk):
             "Vorräte verwalten": SuppliesWindow
         }
 
-        self.create_button("Bestandsliste", 2, 2)
+        self.create_button("Bestandsliste", 2, 2, command=self.controller.export_csv)
 
         self.create_button("Lagerort", 2, 4)
 

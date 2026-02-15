@@ -29,7 +29,7 @@ class SuppliesDatabase(Database):
 ########## Get ##########
     def get_supplies(self):
         self.cursor.execute("""
-        SELECT * From vorraete
+        SELECT * FROM vorraete
         """)
         return self.cursor.fetchall()
     
