@@ -1,11 +1,10 @@
 import tkinter as tk
 from view.storage_toplevel import StrorageWindow
 from view.supplies_toplevel import SuppliesWindow
-from controller.create_csv import CreateSheet
 
 class MainWindow(tk.Tk):
 
-    def __init__(self, parent, controller):
+    def __init__(self, controller):
         super().__init__()
         self.title("Haushaltsverwaltung")
         self.geometry("480x140")

@@ -21,7 +21,7 @@ class AppController:
         self.csv_exporter = CreateSheet(self.db_supplies)
 
         #View erstellen
-        self.main_window = MainWindow(parent=None, controller=self)
+        self.main_window = MainWindow(controller=self)
     
     def export_csv(self):
         self.csv_exporter.create_csv_sheet()
