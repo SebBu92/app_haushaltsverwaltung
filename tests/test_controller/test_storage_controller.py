@@ -36,7 +36,13 @@ def test_save_storage_with_valid_value():
     pass
 
 def test_delete_storage_without_value():
-    pass
+    mock_db = Mock()
+
+    controller = StorageController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.delete_storage("")
+    mock_db.insert_storage.assert_not_called()
 
 def test_delete_storage_with_valid_value():
     pass
