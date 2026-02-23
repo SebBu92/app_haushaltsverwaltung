@@ -27,9 +27,9 @@ def test_delete_storage(tmp_path):
     db.delete_storage("Speicher")
 
     db.cursor.execute("""
-    SELECT lagerort FROM lagerort WHERE lagerort=?""",
-    ("Speicher",)
-    )
+    SELECT * FROM lagerort
+    """)
+
     result = db.cursor.fetchone()
     assert result is  None
 
