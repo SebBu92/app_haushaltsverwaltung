@@ -1,5 +1,8 @@
 from db.storage_db import StorageDatabase
 
+'''
+TODO: die create_table methode als Integrationstest implementieren
+'''
 
 def test_insert_storage(tmp_path):
     test_db = tmp_path / "test.db"
@@ -9,11 +12,11 @@ def test_insert_storage(tmp_path):
     db.insert_storage("Keller")
 
     db.cursor.execute("""
-    SELECT lagerort FROM lagerort WHERE lagerort=?""",
-    ("Keller",)
-    )
-    result = db.cursor.fetchone()
-    assert result[0] == "Keller"
+    SELECT * FROM lagerort
+    """)
+
+    result = db.cursor.fetchall()
+    assert result[0][0] == "Keller"
 
 def test_delete_storage(tmp_path):
     test_db = tmp_path / "test.db"

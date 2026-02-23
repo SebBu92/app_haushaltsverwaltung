@@ -1,3 +1,5 @@
+from typing import Any
+
 from db.database import Database
 
 class SuppliesDatabase(Database):

@@ -63,7 +63,6 @@ class SuppliesController:
             raise ValueError("Menge muss eine Zahl sein.")
         
         if not 0 <= quantity < 100:
-            print(type(quantity))
             raise ValueError("Menge muss zwischen 0 und 100 liegen.")
             
         
