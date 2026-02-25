@@ -151,18 +151,18 @@ def test_add_quantity(tmp_path):
 
     db.insert_supplies("Pesto", 2, "Keller", "2027-12-12")
     db.insert_supplies("Kekse", 6, "Keller", "2027-12-12")
-    db.insert_supplies("Honig", -3, "Keller", "2027-12-12")
+    db.insert_supplies("Honig", 3, "Keller", "2027-12-12")
 
     db.add_quantity(5, 1)
     db.add_quantity(5, 2)
     db.add_quantity(5, 3)
-    db.cursor.execute("""SELECT * FROM vorraete""")
 
+    db.cursor.execute("""SELECT * FROM vorraete ORDER BY waren_id""")
     result = db.cursor.fetchall()
 
     assert result [0][2] == 7
     assert result [1][2] == 11
-    assert result [2][2] == 2
+    assert result [2][2] == 8
 
 def test_sub_quantity(tmp_path):
     test_db = tmp_path / "test_db.db"
@@ -170,19 +170,19 @@ def test_sub_quantity(tmp_path):
     db.create_table()
 
     db.insert_supplies("Pesto", 12, "Keller", "2027-12-12")
-    db.insert_supplies("Kekse", 6, "Keller", "2027-12-12")
-    db.insert_supplies("Honig", -3, "Keller", "2027-12-12")
+    db.insert_supplies("Kekse", 50, "Keller", "2027-12-12")
+    db.insert_supplies("Honig", 7, "Keller", "2027-12-12")
 
     db.sub_quantity(3, 1)
     db.sub_quantity(4, 2)
     db.sub_quantity(5, 3)
 
-    db.cursor.execute("""SELECT * FROM vorraete""")
+    db.cursor.execute("""SELECT * FROM vorraete ORDER BY waren_id""")
     result = db.cursor.fetchall()
 
     assert result [0][2] == 9
-    assert result [1][2] == 2
-    assert result [2][2] == -8
+    assert result [1][2] == 46
+    assert result [2][2] == 2
 
 def test_update_storage(tmp_path):
     test_db = tmp_path / "test_db.db"
@@ -191,13 +191,13 @@ def test_update_storage(tmp_path):
 
     db.insert_supplies("Pesto", 2, "Keller", "2027-12-12")
     db.insert_supplies("Kekse", 6, "Keller", "2027-12-12")
-    db.insert_supplies("Honig", -3, "Keller", "2027-12-12")
+    db.insert_supplies("Honig", 3, "Keller", "2027-12-12")
 
     db.update_storage("Kühlschrank", 1)
     db.update_storage("Abstellraum Regal Rechts", 2)
     db.update_storage("Abstellraum Regal Links", 3)
 
-    db.cursor.execute("""SELECT * FROM vorraete""")
+    db.cursor.execute("""SELECT * FROM vorraete ORDER BY waren_id""")
     result = db.cursor.fetchall()
 
     assert result[0][3] == "Kühlschrank"
@@ -211,13 +211,13 @@ def test_update_mhd(tmp_path):
 
     db.insert_supplies("Pesto", 2, "Keller", "2027-12-12")
     db.insert_supplies("Kekse", 6, "Keller", "2027-12-12")
-    db.insert_supplies("Honig", -3, "Keller", "2027-12-12")
+    db.insert_supplies("Honig", 3, "Keller", "2027-12-12")
 
     db.update_mhd("2026-07-30", 1)
     db.update_mhd("2028-09-08", 2)
     db.update_mhd("2031-01-08", 3)
 
-    db.cursor.execute("""SELECT * FROM vorraete""")
+    db.cursor.execute("""SELECT * FROM vorraete ORDER BY waren_id""")
     result = db.cursor.fetchall()
 
     assert result[0][4] == "2026-07-30"
