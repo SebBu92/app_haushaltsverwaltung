@@ -1,7 +1,7 @@
 from db.storage_db import StorageDatabase
 
 '''
-TODO: die create_table methode als Integrationstest implementieren
+TODO: create_table methode als Integrationstest implementieren
 '''
 
 def test_insert_storage(tmp_path):
