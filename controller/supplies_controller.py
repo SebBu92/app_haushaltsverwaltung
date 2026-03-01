@@ -4,6 +4,9 @@ class SuppliesController:
     def __init__(self, db):
         self.db = db
 
+    def get_supplies(self):
+        return self.db.get_supplies()
+
     def sort_by_mhd(self, sequence: str):
         if sequence == "Aufsteigend":
             return self.db.sort_mhd_asc()
@@ -21,9 +24,6 @@ class SuppliesController:
                 return self.db.sort_supplies(new_entry)
         else:
             return self.db.sort_supplies(entry)
-        
-    def get_supplies(self):
-        return self.db.get_supplies()
     
     def delete_supplies(self, supplies_id: int):
         if supplies_id <= 0:
