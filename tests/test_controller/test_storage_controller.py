@@ -50,7 +50,7 @@ def test_delete_storage_without_value():
     with pytest.raises(ValueError):
         controller.delete_storage("")
 
-    mock_db.insert_storage.assert_not_called()
+    mock_db.delete_storage.assert_not_called()
 
 def test_delete_storage_with_valid_value():
     mock_db = Mock()

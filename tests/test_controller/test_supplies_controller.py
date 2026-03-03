@@ -87,4 +87,24 @@ def test_filter_supplies_entry_with_many_wildcards():
     mock_db.sort_supplies.assert_called_once_with("%Pes%t%o%")
     assert result == "%Pes%t%o%"
 
+def test_delete_supplies_without_value():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.delete_supplies(-1)
+
+    mock_db.delete_supplies.assert_not_called()
+
+def test_delete_supplies_with_valid_value():
+    mock_db = Mock()
+    mock_db.delete_supplies.return_value = None
+
+    controller = SuppliesController(mock_db)
+    result = controller.delete_supplies(1)
+
+    mock_db.delete_supplies.assert_called_once_with(1)
+    assert result is None
+
 
