@@ -107,4 +107,95 @@ def test_delete_supplies_with_valid_value():
     mock_db.delete_supplies.assert_called_once_with(1)
     assert result is None
 
+def test_add_quantity_with_invalid_id():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
 
+    with pytest.raises(ValueError):
+        controller.add_quantity(5, -1)
+
+    mock_db.add_quantity.assert_not_called()
+
+def test_add_quantity_with_quantity_smaller_one():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.add_quantity(0, 1)
+
+    mock_db.add_quantity.assert_not_called()
+
+def test_add_quantity_with_quantity_bigger_hundred():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.add_quantity(101, 1)
+
+    mock_db.add_quantity.assert_not_called()
+
+def test_add_quantity_with_valid_value():
+    mock_db = Mock()
+    mock_db.add_quantity.return_value = 5
+
+    controller = SuppliesController(mock_db)
+    result = controller.add_quantity(100, 1)
+
+    mock_db.add_quantity.assert_called_once_with(100, 1)
+    assert result == 5
+
+def test_sub_quantity_with_invalid_id():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.add_quantity(5, -1)
+
+    mock_db.add_quantity.assert_not_called()
+
+def test_sub_quantity_with_quantity_smaller_one():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.add_quantity(0, 1)
+
+    mock_db.add_quantity.assert_not_called()
+
+def test_sub_quantity_with_quantity_bigger_hundred():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.add_quantity(101, 1)
+
+    mock_db.add_quantity.assert_not_called()
+
+def test_sub_quantity_with_valid_value():
+    mock_db = Mock()
+    mock_db.add_quantity.return_value = 5
+
+    controller = SuppliesController(mock_db)
+    result = controller.add_quantity(100, 1)
+
+    mock_db.add_quantity.assert_called_once_with(100, 1)
+    assert result == 5
+
+def test_update_storage_without_value():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_storage("", 1)
+
+    mock_db.update_strorage.assert_not_called()
+
+def test_update_storage_with_valid_value():
+    mock_db = Mock()
+    mock_db.update_storage.return_value = "Abstellraum"
+
+    controller = SuppliesController(mock_db)
+    result = controller.update_storage("Abstellraum", 3)
+
+    mock_db.update_storage.assert_called_once_with("Abstellraum", 3)
+    assert result == "Abstellraum"
