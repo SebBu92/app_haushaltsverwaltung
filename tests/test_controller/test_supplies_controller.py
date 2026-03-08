@@ -199,3 +199,220 @@ def test_update_storage_with_valid_value():
 
     mock_db.update_storage.assert_called_once_with("Abstellraum", 3)
     assert result == "Abstellraum"
+
+def test_update_mhd_with_dot_front():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2021.07-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_dot_back():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2021-07.01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_invalid_length():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2021-407-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_invalid_format():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("20210-7-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_invalid_year():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2019-07-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_month_smaller_one():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2022-00-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_month_bigger_12():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2022-13-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_day_smaller_one():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2022-00-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_day_bigger_31():
+    mock_db = Mock()
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.update_mhd("2022-32-01", 1)
+
+    mock_db.update_mhd.assert_not_called()
+
+def test_update_mhd_with_valid_value():
+    mock_db = Mock()
+    mock_db.update_mhd.return_value = "2025-12-12"
+
+    controller = SuppliesController(mock_db)
+    result = controller.update_mhd("2025-12-12", 3)
+
+    mock_db.update_mhd.assert_called_once_with("2025-12-12", 3)
+    assert result == "2025-12-12"
+
+def test_save_supplies_invalid_type_quantity():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Kekse", "Keller", "2025-12-12", "F")
+
+    mock_db.insert_supplies.assert_not_called()
+
+def test_save_supplies_quantity_smaller_null():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Kekse", "Keller", "2025-12-12", "-1")
+
+    mock_db.insert_supplies.assert_not_called()
+
+
+
+
+def test_save_supplies_quantity_bigger_hundred():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Kekse", "Keller", "2025-12-12", "101")
+
+    mock_db.insert_supplies.assert_not_called()
+
+def test_save_supplies_without_name():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("", "Keller", "2025-12-12", "1")
+
+    mock_db.insert_supplies.assert_not_called()
+
+def test_save_supplies_default_name():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Bezeichnung Vorrat", "Keller", "2025-12-12", "2")
+
+    mock_db.insert_supplies.assert_not_called()
+
+def test_save_supplies_without_storage():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Kekse", "", "2025-12-12", "3")
+
+    mock_db.insert_supplies.assert_not_called()
+
+def test_save_supplies_without_mhd():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Kekse", "Keller", "", "4")
+
+    mock_db.insert_supplies.assert_not_called()
+
+def test_save_supplies_default_mhd():
+    mock_db = Mock()
+
+    controller = SuppliesController(mock_db)
+
+    with pytest.raises(ValueError):
+        controller.save_supplies("Kekse", "Keller", "MHD (JJJJ-MM-DD)", "5")
+
+    mock_db.insert_supplies.assert_not_called()
+
+
+
+
+def test_save_supplies_with_valid_values():
+    mock_db = Mock()
+    mock_db.insert_supplies.return_value = ("Pesto", "Kühlschrank", "2026-09-30", 13)
+
+    controller = SuppliesController(mock_db)
+    result = controller.save_supplies("Nutella", "Regal Links", "2027-05-30", "2")
+
+    mock_db.insert_supplies.assert_called_once_with("Nutella", "2", "Regal Links", "2027-05-30")
+    assert result == ("Pesto", "Kühlschrank", "2026-09-30", 13)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

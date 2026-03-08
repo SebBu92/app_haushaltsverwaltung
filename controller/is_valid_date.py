@@ -1,6 +1,7 @@
 class CheckDate:
+
     @staticmethod
-    def is_valid_date(date):
+    def is_valid_date(date: str):
         if len(date) != 10:
             return False
 
@@ -12,6 +13,9 @@ class CheckDate:
             month = int(date[5:7])
             day = int(date[8:10])
         except ValueError:
+            return False
+
+        if not (year >= 2020):
             return False
 
         if not (1 <= month <= 12):

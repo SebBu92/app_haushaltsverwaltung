@@ -64,8 +64,7 @@ class SuppliesController:
         
         if not 0 <= quantity < 100:
             raise ValueError("Menge muss zwischen 0 und 100 liegen.")
-            
-        
+
         if not supplies_name or supplies_name == "Bezeichnung Vorrat":
             raise ValueError("Bitte eine Bezeichnung eingeben.")
         
