@@ -57,7 +57,7 @@ def test_delete_storage_with_valid_value():
     mock_db.delete_storage.return_value = None
 
     controller = StorageController(mock_db)
-    result = controller.delete_storage("Gaarage")
+    result = controller.delete_storage("Garage")
 
     mock_db.delete_storage.assert_called_once_with("Garage")
     assert result is None
