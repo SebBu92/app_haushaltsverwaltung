@@ -6,6 +6,7 @@ from controller.supplies_controller import SuppliesController
 from controller.storage_controller import StorageController
 from controller.create_csv import CreateSheet
 
+
 class AppController:
     def __init__(self):
         # Datenbank initializieren
@@ -20,13 +21,11 @@ class AppController:
         self.storage_controller = StorageController(self.db_storage)
         self.csv_exporter = CreateSheet(self.db_supplies)
 
-        #View erstellen
+        # View erstellen
         self.main_window = MainWindow(controller=self)
-    
+
     def export_csv(self):
         self.csv_exporter.create_csv_sheet()
 
     def run(self):
         self.main_window.mainloop()
-
-
